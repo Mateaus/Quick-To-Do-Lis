@@ -235,8 +235,6 @@
         function preEditItem(event) {
             var item = event.currentTarget.item;
             var element = event.currentTarget.elem;
-
-            console.log("In preEditItem", item)
             
             var itemRow = document.getElementById(`data-${item.id}`)
 
@@ -269,9 +267,22 @@
             delButton.oldValue = oldItemTitle.textContent
             delButton.element = itemRow
             delButton.item = item
-            
+        }
 
-            //console.log(itemTitle.textContent)
+        function createNewItemTitle(element, className, item) {
+            var newItemTitle = document.createElement(element)
+            newItemTitle.className = className;
+            if (item.completed) {
+                newItemTitle.style.textDecoration = 'line-through';
+            } else {
+                newItemTitle.style.textDecoration = 'none';
+            }
+                    
+            newItemTitle.textContent = item.title;
+            newItemTitle.addEventListener('click', strikeTitle, false);
+            newItemTitle.item = item;
+            newItemTitle.elem = newItemTitle
+            return newItemTitle
         }
 
         function updateItem(event) {
@@ -281,7 +292,7 @@
             var item = event.currentTarget.item
 
             if ((oldVal.trim() != newVal.trim()) && (newVal.trim() != "")) {   
-                console.log("WHY IS IT EVEN ENTERING HERE?")
+                
                 item.title = newVal
                 var url = `http://localhost:8000/api/task-update/${item.id}`
 
@@ -296,19 +307,7 @@
                     var oldItemTitle = parentElement.children[0].getElementsByClassName('title')[0]
                     oldItemTitle.removeEventListener('click', strikeTitle)
 
-                    var newItemTitle = document.createElement('span')
-                    newItemTitle.className = 'title text';
-                    if (item.completed) {
-                        newItemTitle.style.textDecoration = 'line-through';
-                    } else {
-                        newItemTitle.style.textDecoration = 'none';
-                    }
-                    
-                    newItemTitle.textContent = newVal;
-                    newItemTitle.addEventListener('click', strikeTitle, false);
-                    newItemTitle.item = item;
-                    newItemTitle.elem = newItemTitle
-
+                    var newItemTitle = createNewItemTitle('span', 'title text', item)
                     oldItemTitle.replaceWith(newItemTitle)
 
 
@@ -340,21 +339,8 @@
                 var oldItemTitle = parentElement.children[0].getElementsByClassName('title')[0]
                 oldItemTitle.removeEventListener('click', strikeTitle)
 
-                var newItemTitle = document.createElement('span')
-                newItemTitle.className = 'title text';
-                if (item.completed) {
-                    newItemTitle.style.textDecoration = 'line-through';
-                } else {
-                    newItemTitle.style.textDecoration = 'none';
-                }
-                console.log("This is the old value", oldVal)
-                newItemTitle.textContent = oldVal;
-                newItemTitle.addEventListener('click', strikeTitle, false);
-                newItemTitle.item = item;
-                newItemTitle.elem = newItemTitle
-
+                var newItemTitle = createNewItemTitle('span', 'title text', item)
                 oldItemTitle.replaceWith(newItemTitle)
-
 
                 var editBtnParent = parentElement.children[1]
                 editBtnParent.setAttribute('style','flex:1')
@@ -384,15 +370,8 @@
             var parentElement = event.currentTarget.element
 
             var oldItemTitle = parentElement.children[0].getElementsByClassName('title')[0]
-            var newItemTitle = document.createElement('span')
-            newItemTitle.className = 'title text';
-            if (oldItem.completed) {
-                newItemTitle.style.textDecoration = 'line-through';
-            } else {
-                newItemTitle.style.textDecoration = 'none';
-            }
-      
-            newItemTitle.textContent = oldTitle;
+
+            var newItemTitle = createNewItemTitle('span', 'title text', oldItem)
             oldItemTitle.replaceWith(newItemTitle)
 
             var editBtnParent = parentElement.children[1]
